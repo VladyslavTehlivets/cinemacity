@@ -8,7 +8,9 @@ data class CinemaPersistable(
         var name: String,
         var cityName: String
 ) {
-    fun toCinemaAggregate(): Cinema {
+    constructor(cinema: Cinema) : this(cinema.cinemaName, cinema.cityName)
+
+    fun toDomainObject(): Cinema {
         return Cinema(name, cityName)
     }
 }

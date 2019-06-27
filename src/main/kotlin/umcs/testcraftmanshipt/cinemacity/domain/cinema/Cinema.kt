@@ -1,3 +1,5 @@
 package umcs.testcraftmanshipt.cinemacity.domain.cinema
 
-data class Cinema(private val cinemaName: String, private val cityName: String)
+import umcs.testcraftmanshipt.cinemacity.domain.DomainObject
+
+data class Cinema(val cinemaName: String, val cityName: String) : DomainObject()
