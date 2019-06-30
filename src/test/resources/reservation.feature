@@ -11,7 +11,7 @@ Feature: Tickets reservation
     And the ticked cost is 25 PLN
     When I select cinema "Plaza" in "Lublin"
     And I select show at "2019-05-01 20:00"
-    And I select 1 ticket
+    And I select 1 tickets
     Then the cost of reservation is 25 PLN
     When I select seat 10 in row 5
     And I make a reservation

@@ -5,6 +5,7 @@ import cucumber.api.java.en.Given
 import cucumber.api.java.en.Then
 import cucumber.api.java.en.When
 import cucumber.api.java8.En
+import org.junit.Assert.assertEquals
 import org.springframework.boot.test.context.SpringBootTest
 import umcs.testcraftmanshipt.cinemacity.domain.cinema.Cinema
 import umcs.testcraftmanshipt.cinemacity.domain.cinema.CinemaRepository
@@ -13,6 +14,7 @@ import umcs.testcraftmanshipt.cinemacity.domain.movie.MovieRepository
 import umcs.testcraftmanshipt.cinemacity.domain.movie.commands.CreateMovieCMD
 import umcs.testcraftmanshipt.cinemacity.domain.show.Show
 import umcs.testcraftmanshipt.cinemacity.domain.show.ShowRepository
+import umcs.testcraftmanshipt.cinemacity.domain.show.ticket.commands.CheckTicketAvailabilityCMD
 import umcs.testcraftmanshipt.cinemacity.domain.show.commands.CreateShowCMD
 import umcs.testcraftmanshipt.cinemacity.infrastructure.CommandHandler
 import java.time.LocalDateTime
@@ -23,8 +25,8 @@ class Reservation(val cinemaRepository: CinemaRepository,
                   val showRepository: ShowRepository,
                   val movieRepository: MovieRepository) : En {
 
-    private lateinit var selectedShow: Show
-    private lateinit var selectedCinema: Cinema
+    private lateinit var givenShow: Show
+    private lateinit var givenCinema: Cinema
     private var ticketCost: Int = 0
     private lateinit var today_date: LocalDateTime
 
@@ -37,19 +39,20 @@ class Reservation(val cinemaRepository: CinemaRepository,
     fun cinema_in_is_defined(expectedCinemaName: String, expectedCityName: String) {
         val createCinemaCMD = CreateCinemaCMD(expectedCinemaName, expectedCityName)
         commandHandler.execute(createCinemaCMD)
+        givenCinema = cinemaRepository.findByNameAndCityName(expectedCinemaName, expectedCityName)!!
     }
 
     @Given("^movie \"([^\"]*)\" is defined$")
     fun movie_is_defined(expectedMovieName: String) {
-        val createMovieCMD = CreateMovieCMD(expectedMovieName, selectedCinema.id) //todo this will throw exception
+        val createMovieCMD = CreateMovieCMD(expectedMovieName, givenCinema.id)
         commandHandler.execute(createMovieCMD)
     }
 
     @Given("^show \"([^\"]*)\" is played in cinema \"([^\"]*)\" in \"([^\"]*)\"$")
     fun show_is_played_in_cinema_in(expectedShowName: String, expectedCinemaName: String, expectedCityName: String) {
-        val cinemaId = cinemaRepository.findByNameAndCityName(expectedCinemaName, expectedCityName)!!.id
-        val createShowCMD = CreateShowCMD(expectedShowName, cinemaId)
+        val createShowCMD = CreateShowCMD(expectedShowName, givenCinema.id)
         commandHandler.execute(createShowCMD)
+        givenShow = showRepository.findByNameAndCinemaId(expectedShowName, givenCinema.id)
     }
 
     @Given("^the ticked cost is (\\d+) PLN$")
@@ -58,21 +61,20 @@ class Reservation(val cinemaRepository: CinemaRepository,
     }
 
     @When("^I select cinema \"([^\"]*)\" in \"([^\"]*)\"$")
-    fun i_select_cinema_in(expectedCinema: String, expectedCity: String) {
-        selectedCinema = cinemaRepository.findByNameAndCityName(expectedCinema, expectedCity)!!
+    fun i_select_cinema_in(expectedCinemaName: String, expectedCity: String) {
+        assertEquals(givenCinema.cinemaName, expectedCinemaName)
+        assertEquals(givenCinema.cityName, expectedCity)
     }
 
     @When("^I select show at \"([^\"]*)\"$")
     fun i_select_show_at(expectedShowName: String) {
-        //todo aaaaaaaaaaaaaaaaaaaa
-        selectedShow = showRepository.findByNameAndCinemaId(expectedShowName, selectedCinema.id)
+        assertEquals(givenShow.name, expectedShowName)
     }
 
-    @When("^I select (\\d+) ticket$")
-    @Throws(Exception::class)
-    fun i_select_ticket(arg1: Int) {
-        // Write code here that turns the phrase above into concrete actions
-        throw PendingException()
+    @When("^I select (\\d+) tickets$")
+    //todo not throw exception
+    fun i_select_ticket(ticketCount: Int) {
+        commandHandler.execute(CheckTicketAvailabilityCMD(ticketCount, givenShow.id.value))
     }
 
     @Then("^the cost of reservation is (\\d+) PLN$")
