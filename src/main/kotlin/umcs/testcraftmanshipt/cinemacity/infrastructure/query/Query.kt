@@ -1,0 +1,3 @@
+package umcs.testcraftmanshipt.cinemacity.infrastructure.query
+
+interface Query

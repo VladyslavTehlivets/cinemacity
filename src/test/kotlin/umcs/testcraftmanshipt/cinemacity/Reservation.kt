@@ -6,6 +6,7 @@ import cucumber.api.java.en.Then
 import cucumber.api.java.en.When
 import cucumber.api.java8.En
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.springframework.boot.test.context.SpringBootTest
 import umcs.testcraftmanshipt.cinemacity.domain.cinema.Cinema
 import umcs.testcraftmanshipt.cinemacity.domain.cinema.CinemaRepository
@@ -14,16 +15,21 @@ import umcs.testcraftmanshipt.cinemacity.domain.movie.MovieRepository
 import umcs.testcraftmanshipt.cinemacity.domain.movie.commands.CreateMovieCMD
 import umcs.testcraftmanshipt.cinemacity.domain.show.Show
 import umcs.testcraftmanshipt.cinemacity.domain.show.ShowRepository
-import umcs.testcraftmanshipt.cinemacity.domain.show.ticket.commands.CheckTicketAvailabilityCMD
 import umcs.testcraftmanshipt.cinemacity.domain.show.commands.CreateShowCMD
+import umcs.testcraftmanshipt.cinemacity.domain.show.ticket.PricePolicy
 import umcs.testcraftmanshipt.cinemacity.infrastructure.CommandHandler
+import umcs.testcraftmanshipt.cinemacity.infrastructure.query.show.ticket.TicketAvailabilityQuery
+import umcs.testcraftmanshipt.cinemacity.infrastructure.query.show.ticket.TicketBoardQueryRepo
+import umcs.testcraftmanshipt.cinemacity.infrastructure.query.show.ticket.TicketsCostQuery
+import java.math.BigDecimal
 import java.time.LocalDateTime
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class Reservation(val cinemaRepository: CinemaRepository,
                   val commandHandler: CommandHandler,
                   val showRepository: ShowRepository,
-                  val movieRepository: MovieRepository) : En {
+                  val movieRepository: MovieRepository,
+                  val ticketBoardRepo: TicketBoardQueryRepo) : En {
 
     private lateinit var givenShow: Show
     private lateinit var givenCinema: Cinema
@@ -48,16 +54,11 @@ class Reservation(val cinemaRepository: CinemaRepository,
         commandHandler.execute(createMovieCMD)
     }
 
-    @Given("^show \"([^\"]*)\" is played in cinema \"([^\"]*)\" in \"([^\"]*)\"$")
-    fun show_is_played_in_cinema_in(expectedShowName: String, expectedCinemaName: String, expectedCityName: String) {
-        val createShowCMD = CreateShowCMD(expectedShowName, givenCinema.id)
+    @Given("^show \"([^\"]*)\" in the cinema has (\\d+) PLN ticket cost\$")
+    fun show_is_played_in_cinema_in(expectedShowName: String, givenCost: BigDecimal) {
+        val createShowCMD = CreateShowCMD(expectedShowName, givenCinema.id, givenCost)
         commandHandler.execute(createShowCMD)
         givenShow = showRepository.findByNameAndCinemaId(expectedShowName, givenCinema.id)
-    }
-
-    @Given("^the ticked cost is (\\d+) PLN$")
-    fun the_ticked_cost_is_PLN(expectedTicketCost: Int) {
-        ticketCost = expectedTicketCost
     }
 
     @When("^I select cinema \"([^\"]*)\" in \"([^\"]*)\"$")
@@ -71,17 +72,15 @@ class Reservation(val cinemaRepository: CinemaRepository,
         assertEquals(givenShow.name, expectedShowName)
     }
 
-    @When("^I select (\\d+) tickets$")
-    //todo not throw exception
+    @When("^I select (\\d+) tickets with$")
     fun i_select_ticket(ticketCount: Int) {
-        commandHandler.execute(CheckTicketAvailabilityCMD(ticketCount, givenShow.id.value))
+        val availableStatusResponse = ticketBoardRepo.getResponseFor(TicketAvailabilityQuery(ticketCount, givenShow.id.value))
+        assertTrue(availableStatusResponse)
     }
 
     @Then("^the cost of reservation is (\\d+) PLN$")
-    @Throws(Exception::class)
-    fun the_cost_of_reservation_is_PLN(arg1: Int) {
-        // Write code here that turns the phrase above into concrete actions
-        throw PendingException()
+    fun the_cost_of_reservation_is_PLN(amount: BigDecimal) {
+        ticketBoardRepo.getResponseFor(TicketsCostQuery(mutableListOf(PricePolicy.NORMAL_TICKET, PricePolicy.STUDENT_TICKET)))
     }
 
     @When("^I select seat (\\d+) in row (\\d+)$")

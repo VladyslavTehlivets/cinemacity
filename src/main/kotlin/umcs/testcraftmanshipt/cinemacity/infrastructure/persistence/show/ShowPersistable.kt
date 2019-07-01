@@ -12,6 +12,6 @@ data class ShowPersistable(
     constructor(show: Show) : this(show.name, show.cinemaId.value)
 
     fun toDomainObject(): Show {
-        return Show(name, DomainObjectID(cinemaId))
+        return Show(name, DomainObjectID(cinemaId), cost)
     }
 }
