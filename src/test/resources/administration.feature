@@ -1,21 +1,35 @@
 Feature: Cinema administration
 
-  Scenario: The one where the administrator defines cinema
-    When administrator create the cinema "Plaza" in the city "Lublin"
-    Then cinema "Plaza" in the city "Lublin" is created
+  Scenario Outline: The one where the administrator defines cinema
+    When administrator creates the cinema <cinemaName> in the city <cityName>
+    Then cinema <cinemaName> in the city <cityName> is created
+    Examples:
+      | cinemaName | cityName
+      | "Plaza"    | "Lublin"
 
-  Scenario: The one where the administrator defines film
-    When administrator create the film "Czornobyl"
-    Then film "Czornobyl" is created
+  Scenario Outline: The one where the administrator defines movie
+    When administrator creates the movie <movieName>
+    Then movie <movieName> is created
 
-  Scenario: The one where the administrator defines show
-    Given cinema "Plaza" in the city "Lublin" is defined
-    And film "Czornobyl" is defined
-    When administrator create show "Czornobyl" with given film, one ticket to which costs 25 PLN in given cinema
+    Examples:
+      | movieName
+      | "Lublin History"
+
+  Scenario Outline: The one where the administrator defines show
+    Given cinema <cinemaName> in <cityName> is defined
+    And movie <movieName> is defined
+    When administrator create show <showName> with given movie, one ticket to which costs 25 PLN in given cinema
     Then one ticket to this show in given cinema costs 25 PLN
 
-  Scenario: The one where the administrator can add different ticket types to show
-    Given show "Czornobyl" is defined in cinema and normaly costs 25 PLN
-    When administrator add "STUDENT_TICKET" wich costs 18 PLN to show
-    Then show's "NORMAL_TICKET" costs 25 PLN
-    And show's "STUDEN_TICKET" costs 18 PLN
+    Examples:
+      | cinemaName | cityName | movieName         | showName
+      | "Plaza"    | "Lublin" | "Lublin History" | "Lublin history show"
+
+  Scenario Outline: The one where the administrator can add different ticket types to show
+    Given show <showName> is defined in cinema and normally costs 25 PLN
+    When administrator add <ticketPolicy> which costs 18 PLN to show
+    Then show's <ticketPolicy> costs 25 PLN
+    And show's <studentTicketPolicy> costs 18 PLN
+    Examples:
+      | showName              | ticketPolicy    | studentTicketPolicy
+      | "Lublin history show" | "NORMAL_TICKET" | "STUDENT_TICKET"

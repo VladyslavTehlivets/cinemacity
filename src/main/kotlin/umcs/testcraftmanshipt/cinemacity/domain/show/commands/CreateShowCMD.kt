@@ -1,7 +1,8 @@
 package umcs.testcraftmanshipt.cinemacity.domain.show.commands
 
 import umcs.testcraftmanshipt.cinemacity.domain.Command
-import umcs.testcraftmanshipt.cinemacity.domain.DomainObjectID
 import java.math.BigDecimal
+import java.time.LocalDateTime
 
-class CreateShowCMD(val expectedShowName: String, val cinemaId: DomainObjectID, val cost: BigDecimal) : Command
+class CreateShowCMD(val showName: String, val movieId: String, val cinemaId: String,
+                    val cost: BigDecimal, val dateTime: LocalDateTime) : Command

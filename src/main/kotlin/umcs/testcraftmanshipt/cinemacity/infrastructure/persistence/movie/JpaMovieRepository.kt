@@ -6,6 +6,9 @@ import umcs.testcraftmanshipt.cinemacity.domain.movie.MovieRepository
 
 @Repository
 class JpaMovieRepository(private val movieRepository: SpringDataMovieRepository) : MovieRepository {
+    override fun findByName(movieName: String): Movie {
+        return movieRepository.findByName(movieName)
+    }
 
     override fun save(movie: Movie) {
         val moviePersistable = MoviePersistable(movie)

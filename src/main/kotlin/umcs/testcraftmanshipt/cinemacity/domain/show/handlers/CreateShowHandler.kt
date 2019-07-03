@@ -15,7 +15,7 @@ class CreateShowHandler(private val showRepository: ShowRepository) : Handler<Cr
     }
 
     override fun handle(command: CreateShowCMD) {
-        val show = createShow(command.expectedShowName, command.cinemaId, command.cost)
+        val show = createShow(command)
         showRepository.save(show)
     }
 }
