@@ -15,6 +15,6 @@ class JpaShowRepository @Autowired constructor(private val showRepository: Sprin
     }
 
     override fun findByNameAndCinemaId(expectedShowName: String, id: DomainObjectID): Show {
-        showRepository.findByNameAndCinemaId(expectedShowName, id.value)
+        return showRepository.findByNameAndCinemaId(expectedShowName, id.value)!!.toDomainObject()
     }
 }

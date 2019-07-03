@@ -6,5 +6,5 @@ import umcs.testcraftmanshipt.cinemacity.infrastructure.persistence.show.ShowPer
 @RepositoryDefinition(domainClass = ShowPersistable::class, idClass = Long::class)
 interface SpringDataShowRepository {
     fun save(showPersistable: ShowPersistable)
-    fun findByNameAndCinemaId(showName: String, cinemaId: String)
+    fun findByNameAndCinemaId(showName: String, cinemaId: String): ShowPersistable?
 }
