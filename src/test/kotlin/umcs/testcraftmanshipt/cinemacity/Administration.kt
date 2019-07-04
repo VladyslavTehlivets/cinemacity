@@ -60,7 +60,7 @@ class Administration(private val commandHandler: CommandHandler,
 
     @When("^administrator creates the movie <movieName>$")
     fun administratorCreateTheMovie(movieName: String) {
-        val createMovieCMD = CreateMovieCMD(movieName, cinemaId)
+        val createMovieCMD = CreateMovieCMD(movieName, cinemaId.value)
         val domainObjectID = commandHandler.execute(createMovieCMD)
         movieId = domainObjectID as MovieId
     }

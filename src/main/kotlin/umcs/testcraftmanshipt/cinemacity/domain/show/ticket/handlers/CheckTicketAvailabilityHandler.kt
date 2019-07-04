@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service
 import umcs.testcraftmanshipt.cinemacity.domain.Command
 import umcs.testcraftmanshipt.cinemacity.domain.DomainObjectID
 import umcs.testcraftmanshipt.cinemacity.domain.Handler
+import umcs.testcraftmanshipt.cinemacity.domain.show.ShowId
 import umcs.testcraftmanshipt.cinemacity.domain.show.ticket.TicketBoard
 import umcs.testcraftmanshipt.cinemacity.domain.show.ticket.TicketBoardRepository
 import umcs.testcraftmanshipt.cinemacity.domain.show.ticket.commands.CheckTicketAvailabilityCMD
@@ -16,7 +17,8 @@ class CheckTicketAvailabilityHandler(private val ticketBoardRepository: TicketBo
     }
 
     override fun handle(command: CheckTicketAvailabilityCMD): DomainObjectID {
-        val ticketBoard: TicketBoard = ticketBoardRepository.findByShowId(DomainObjectID(command.showId))
+        val ticketBoard: TicketBoard = ticketBoardRepository.findByShowId(ShowId(command.showId))
         ticketBoard.isAvailableToReservePlaces(command.ticketCount)
+        return ticketBoard.id
     }
 }

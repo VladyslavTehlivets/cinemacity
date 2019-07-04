@@ -46,7 +46,7 @@ class Cashier(private val commandHandler: CommandHandler, private val cinemaRepo
         givenCinema = cinemaRepository.findByNameAndCityName(showTime, cityName)!!
 
         val movieName = "Cool Movie"
-        val createMovieCMD = CreateMovieCMD(movieName, givenCinema.id)
+        val createMovieCMD = CreateMovieCMD(movieName, givenCinema.id.value)
         commandHandler.execute(createMovieCMD)
         givenMovie = movieRepository.findByName(movieName)
 

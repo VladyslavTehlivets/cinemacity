@@ -50,7 +50,7 @@ class ReservationSteps(val cinemaRepository: CinemaRepository,
 
     @Given("^movie <movieName> is defined$")
     fun movie_is_defined(movieName: String) {
-        val createMovieCMD = CreateMovieCMD(movieName, givenCinema.id)
+        val createMovieCMD = CreateMovieCMD(movieName, givenCinema.id.value)
         commandHandler.execute(createMovieCMD)
         givenMovie = movieRepository.findByName(movieName)
     }

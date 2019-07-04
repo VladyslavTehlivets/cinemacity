@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service
 import umcs.testcraftmanshipt.cinemacity.domain.Command
 import umcs.testcraftmanshipt.cinemacity.domain.DomainObjectID
 import umcs.testcraftmanshipt.cinemacity.domain.Handler
+import umcs.testcraftmanshipt.cinemacity.domain.cinema.CinemaId
 import umcs.testcraftmanshipt.cinemacity.domain.movie.Movie
 import umcs.testcraftmanshipt.cinemacity.domain.movie.MovieRepository
 import umcs.testcraftmanshipt.cinemacity.domain.movie.commands.CreateMovieCMD
@@ -16,7 +17,7 @@ class CreateMovieHandler(private val movieRepository: MovieRepository) : Handler
     }
 
     override fun handle(command: CreateMovieCMD): DomainObjectID {
-        val movie = Movie(command.expectedMovieName, command.cinemaId)
+        val movie = Movie(command.expectedMovieName, CinemaId(command.cinemaId))
         movieRepository.save(movie)
         return movie.id
     }
