@@ -1,3 +1,3 @@
 package umcs.testcraftmanshipt.cinemacity.domain
 
-open class DomainObject(val id: DomainObjectID = DomainObjectID())
+open class DomainObject protected constructor(val id: DomainObjectID)

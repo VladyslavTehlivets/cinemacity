@@ -55,7 +55,7 @@ class Cashier(private val commandHandler: CommandHandler, private val cinemaRepo
 
         val createShowCMD = CreateShowCMD(expectedShowName, givenMovie.id.value, givenCinema.id.value, givenCost, of(today, of(19, 30)))
         commandHandler.execute(createShowCMD)
-        givenShow = showRepository.findByNameAndCinemaId(expectedShowName, givenCinema.id)
+        givenShow = showRepository.findByNameAndCinemaId(expectedShowName, givenCinema.id)!!
     }
 
     @And("^(\\d+)-th seat at (\\d+)-th row on show <showName> is reserved by person with first name <firstName> and last name <lastName>$")

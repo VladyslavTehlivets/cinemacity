@@ -15,8 +15,8 @@ class CheckTicketAvailabilityHandler(private val ticketBoardRepository: TicketBo
         return command::class == CheckTicketAvailabilityCMD::class
     }
 
-    override fun handle(command: CheckTicketAvailabilityCMD) {
+    override fun handle(command: CheckTicketAvailabilityCMD): DomainObjectID {
         val ticketBoard: TicketBoard = ticketBoardRepository.findByShowId(DomainObjectID(command.showId))
-        return ticketBoard.isAvailableToReservePlaces(command.ticketCount)
+        ticketBoard.isAvailableToReservePlaces(command.ticketCount)
     }
 }

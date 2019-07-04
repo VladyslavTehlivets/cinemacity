@@ -59,7 +59,7 @@ class ReservationSteps(val cinemaRepository: CinemaRepository,
     fun show_is_played_in_cinema_in(expectedShowName: String, givenCost: BigDecimal, dateTime: LocalDateTime) {
         val createShowCMD = CreateShowCMD(expectedShowName, givenMovie.id.value, givenCinema.id.value, givenCost, dateTime)
         commandHandler.execute(createShowCMD)
-        givenShow = showRepository.findByNameAndCinemaId(expectedShowName, givenCinema.id)
+        givenShow = showRepository.findByNameAndCinemaId(expectedShowName, givenCinema.id)!!
 
         assertEquals(givenShow.name, expectedShowName)
         assertEquals(givenShow.cost.value, givenCost)

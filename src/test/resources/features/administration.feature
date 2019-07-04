@@ -16,20 +16,20 @@ Feature: Cinema administration
       | "Lublin History"
 
   Scenario Outline: The one where the administrator defines show
-    Given cinema <cinemaName> in <cityName> is defined
+    Given cinema <cinemaName> in the city <cityName> is defined
     And movie <movieName> is defined
-    When administrator create show <showName> with given movie, one ticket to which costs 25 PLN in given cinema
-    Then one ticket to this show in given cinema costs 25 PLN
+    When administrator create show <showName> with given movie, one ticket to which costs <ticketPrice> PLN in given cinema at <givenTime>
+    Then one ticket to this show in given cinema costs <ticketPrice> PLN
 
     Examples:
-      | cinemaName | cityName | movieName         | showName
-      | "Plaza"    | "Lublin" | "Lublin History" | "Lublin history show"
+      | cinemaName | cityName | movieName        | showName              | givenTime | ticketPrice
+      | "Plaza"    | "Lublin" | "Lublin History" | "Lublin history show" | "20:00"   | 25
 
   Scenario Outline: The one where the administrator can add different ticket types to show
-    Given show <showName> is defined in cinema and normally costs 25 PLN
-    When administrator add <ticketPolicy> which costs 18 PLN to show
-    Then show's <ticketPolicy> costs 25 PLN
-    And show's <studentTicketPolicy> costs 18 PLN
+    Given show <showName> is defined in cinema and normally costs <ticketPrice> PLN
+    When administrator add <ticketPolicy> which costs <percentFromNormalCost> % to show
+    Then show's <ticketPolicy> costs <ticketPrice> PLN
+    And show's <studentTicketPolicy> costs <studentTicketPrice> PLN
     Examples:
-      | showName              | ticketPolicy    | studentTicketPolicy
-      | "Lublin history show" | "NORMAL_TICKET" | "STUDENT_TICKET"
+      | showName              | ticketPolicy    | studentTicketPolicy | ticketPrice | percentFromNormalCost | studentTicketPrice
+      | "Lublin history show" | "NORMAL_TICKET" | "STUDENT_TICKET"    | 25          | 80                    | 20

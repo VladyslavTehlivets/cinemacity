@@ -4,4 +4,5 @@ import umcs.testcraftmanshipt.cinemacity.domain.DomainObjectID
 
 interface TicketBoardRepository {
     fun findByShowId(domainObjectID: DomainObjectID): TicketBoard
+    fun save(ticketBoard: TicketBoard)
 }
