@@ -2,7 +2,7 @@ Feature: Cashier functions
 
   Scenario Outline: The one where cashier accept reservation as payed by person
     Given show <showName> defined to be at <time>
-    And <seatColumn>-th seat at <seatRow>-th row on show <showName> is reserved by person with <userName>
+    And <seatColumn>-th seat at <seatRow>-th row on show <showName> is reserved by a person with username <userName>
     When this person pay to cashier
     And the cashier accepts reservation for <userName>
     Then reservation for <userName> is accepted
@@ -13,7 +13,7 @@ Feature: Cashier functions
 
   Scenario Outline: The one where cashier reject reservation because of not payed by person in 30 min before the show
     Given show <showName> defined to start in half an hour
-    And <seatColumn>-th seat at <seatRow>-th row on show <showName> is reserved by person with <userName>
+    And <seatColumn>-th seat at <seatRow>-th row on show <showName> is reserved by a <userName>
     When the cashier rejects all not payed reservations
     Then reservation for <userName> is rejected
 
@@ -26,7 +26,7 @@ Feature: Cashier functions
     And <seatColumn>-th seat at <seatRow>-th row on show <showName> is not reserved yet
     When person pay for cashier and order this place
     And the cashier creates and accepts reservation of <seatRow> in <seatColumn> for <userName>
-    Then reservation for <userName> is accepted
+    Then reservation created by cashier for user with <userName> is accepted
 
     Examples:
       | showName              | seatColumn | seatRow | userName

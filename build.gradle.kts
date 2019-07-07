@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 
 plugins {
     kotlin("plugin.jpa") version "1.2.71"
@@ -22,6 +21,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-validation")
+    compile("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:2.0.1")
@@ -29,10 +29,12 @@ dependencies {
     runtimeOnly("com.h2database:h2")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
-    testCompile("io.cucumber:cucumber-junit:2.3.1")
-    testCompile("io.cucumber:cucumber-java8:2.3.1")
-    testImplementation("io.cucumber:cucumber-java8:2.3.1")
-    testImplementation("io.cucumber:cucumber-junit:2.3.1")
+    testCompile("io.cucumber:cucumber-junit:4.3.1")
+    testCompile("io.cucumber:cucumber-java:4.3.1")
+    compile("info.cukes:cucumber-jvm:1.2.5:pom")
+    testImplementation("io.cucumber:cucumber-java:4.3.1")
+    testImplementation("io.cucumber:cucumber-junit:4.3.1")
+    compile("org.springframework.boot:spring-boot-starter-data-mongodb:2.1.4.RELEASE")
 }
 
 val cucumberRuntime by configurations.creating {

@@ -1,11 +1,11 @@
 package umcs.testcraftmanshipt.cinemacity.infrastructure.persistence.movie
 
+import org.springframework.data.mongodb.core.mapping.Document
 import umcs.testcraftmanshipt.cinemacity.domain.cinema.CinemaId
 import umcs.testcraftmanshipt.cinemacity.domain.movie.Movie
 import umcs.testcraftmanshipt.cinemacity.domain.movie.MovieId
-import javax.persistence.Entity
 
-@Entity
+@Document("movie")
 data class MoviePersistable(
         var id: String,
         var name: String,

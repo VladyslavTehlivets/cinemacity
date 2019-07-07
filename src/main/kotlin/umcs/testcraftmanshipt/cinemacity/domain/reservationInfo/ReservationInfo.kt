@@ -7,7 +7,9 @@ import umcs.testcraftmanshipt.cinemacity.domain.show.ticket.ReservationStatus
 import umcs.testcraftmanshipt.cinemacity.domain.show.ticket.ReservationStatus.*
 import java.math.BigDecimal
 
-class ReservationInfo(val showId: ShowId, val reservationNumber: String, val reservationCost: BigDecimal, val username: String, private var reservationStatus: ReservationStatus, id: ReservationInfoId) : DomainObject(id) {
+class ReservationInfo(val showId: ShowId, val reservationNumber: String, val reservationCost: BigDecimal,
+                      val username: String, private var reservationStatus: ReservationStatus, id: ReservationInfoId) : DomainObject(id) {
+
     private val errorStatusFlow: String = "reservationInfo.errorStatusFlow"
 
     constructor(showId: ShowId, reservationNumber: String, reservationCost: BigDecimal, reservationStatus: ReservationStatus, username: String) : this(showId, reservationNumber, reservationCost, username, reservationStatus, ReservationInfoId())
@@ -29,5 +31,9 @@ class ReservationInfo(val showId: ShowId, val reservationNumber: String, val res
         if (reservationStatus == RESERVED) {
             reservationStatus = PAID
         } else throw DomainException(errorStatusFlow)
+    }
+
+    fun reservationStatus(): ReservationStatus {
+        return reservationStatus
     }
 }

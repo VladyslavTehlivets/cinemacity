@@ -4,10 +4,10 @@ import cucumber.api.java.en.And
 import cucumber.api.java.en.Given
 import cucumber.api.java.en.Then
 import cucumber.api.java.en.When
-import cucumber.api.java8.En
 import org.junit.Assert.assertTrue
 import org.junit.BeforeClass
-import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.beans.factory.annotation.Autowired
+import umcs.testcraftmanshipt.cinemacity.CucumberStepDefinitions
 import umcs.testcraftmanshipt.cinemacity.application.commands.RejectNotPayedReservationsCMD
 import umcs.testcraftmanshipt.cinemacity.application.commands.ReserveTicketsCMD
 import umcs.testcraftmanshipt.cinemacity.domain.cinema.Cinema
@@ -28,11 +28,18 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class CashierRejectReservations(private val commandHandler: CommandHandler, private val cinemaRepository: CinemaRepository,
-                                private val showRepository: ShowRepository,
-                                private val movieRepository: MovieRepository,
-                                private val ticketBoardQueryRepo: TicketBoardQueryRepo) : En {
+class CashierRejectReservations : CucumberStepDefinitions() {
+
+    @Autowired
+    private lateinit var commandHandler: CommandHandler
+    @Autowired
+    private lateinit var cinemaRepository: CinemaRepository
+    @Autowired
+    private lateinit var showRepository: ShowRepository
+    @Autowired
+    private lateinit var movieRepository: MovieRepository
+    @Autowired
+    private lateinit var ticketBoardQueryRepo: TicketBoardQueryRepo
 
     private lateinit var givenMovie: Movie
     private lateinit var today: LocalDate
@@ -44,7 +51,7 @@ class CashierRejectReservations(private val commandHandler: CommandHandler, priv
         today = LocalDate.now()
     }
 
-    @Given("^show <showName> defined to start in half an hour$")
+    @Given("show {string} defined to start in half an hour")
     fun showDefinedToStartInHalfAnHour(showName: String) {
         val cityName = "Lublin"
         val cinemaName = "Plaza"
@@ -66,19 +73,19 @@ class CashierRejectReservations(private val commandHandler: CommandHandler, priv
         givenShow = showRepository.findByNameAndCinemaId(expectedShowName, givenCinema.id)!!
     }
 
-    @And("^<seatColumn>-th seat at <seatRow>-th row on show <showName> is reserved by person with <userName>$")
+    @And("{int}-th seat at {int}-th row on show {string} is reserved by a {string}")
     fun thSeatAtThRowOnShowIsReservedByPersonWithFirstNameAndSecondName(seatColumn: Int, seatRow: Int, showName: String, userName: String) {
         val reserveTicketsCMD = ReserveTicketsCMD(givenShow.id.value, userName, mutableListOf(Reservation(seatColumn, seatRow)))
         commandHandler.execute(reserveTicketsCMD)
     }
 
-    @When("^the cashier rejects all not payed reservations$")
+    @When("the cashier rejects all not payed reservations")
     fun theCashierRejectsAllNotPayedReservations() {
         val rejectNotPayedReservationsCMD = RejectNotPayedReservationsCMD(givenShow.id.value)
         commandHandler.execute(rejectNotPayedReservationsCMD)
     }
 
-    @Then("^reservation for <userName> is rejected$")
+    @Then("reservation for {string} is rejected")
     fun reservationForUserNameIsRejected(userName: String) {
         val ticketsStatusList = ticketBoardQueryRepo.getResponseFor(TicketsStatusQuery(userName))
         assertTrue(ticketsStatusList.isEmpty())

@@ -4,9 +4,9 @@ import cucumber.api.java.en.And
 import cucumber.api.java.en.Given
 import cucumber.api.java.en.Then
 import cucumber.api.java.en.When
-import cucumber.api.java8.En
 import org.junit.Assert.assertEquals
-import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.beans.factory.annotation.Autowired
+import umcs.testcraftmanshipt.cinemacity.CucumberStepDefinitions
 import umcs.testcraftmanshipt.cinemacity.domain.DomainObjectID
 import umcs.testcraftmanshipt.cinemacity.domain.cinema.CinemaRepository
 import umcs.testcraftmanshipt.cinemacity.domain.cinema.commands.CreateCinemaCMD
@@ -29,13 +29,20 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class Administration(private val commandHandler: CommandHandler,
-                     private val cinemaRepository: CinemaRepository,
-                     private val movieRepository: MovieRepository,
-                     private val showTicketsRepository: ShowTicketsRepository,
-                     private val showRepository: ShowRepository,
-                     private val showTicketDiscountQueryRepo: ShowTicketDiscountQueryRepo) : En {
+class Administration : CucumberStepDefinitions() {
+
+    @Autowired
+    private lateinit var commandHandler: CommandHandler
+    @Autowired
+    private lateinit var cinemaRepository: CinemaRepository
+    @Autowired
+    private lateinit var movieRepository: MovieRepository
+    @Autowired
+    private lateinit var showTicketsRepository: ShowTicketsRepository
+    @Autowired
+    private lateinit var showRepository: ShowRepository
+    @Autowired
+    private lateinit var showTicketDiscountQueryRepo: ShowTicketDiscountQueryRepo
 
     private lateinit var givenShow: Show
     private lateinit var showId: ShowId
@@ -45,32 +52,32 @@ class Administration(private val commandHandler: CommandHandler,
 
     private val today: LocalDate = LocalDate.now()
 
-    @When("^administrator creates the cinema <cinemaName> in the city <cityName>$")
+    @When("administrator creates the cinema {string} in the city {string}")
     fun administratorCreatesTheCinemaInTheCity(cinemaName: String, cityName: String) {
         val createCinemaCMD = CreateCinemaCMD(cinemaName, cityName)
         cinemaId = commandHandler.execute(createCinemaCMD)
     }
 
-    @Then("^cinema <cinemaName> in the city <cityName> is created$")
+    @Then("cinema {string} in the city {string} is created")
     fun cinemaInTheCityIsCreated(cinemaName: String, cityName: String) {
         val cinema = cinemaRepository.findByNameAndCityName(cinemaName, cityName)!!
         assertEquals(cinema.cinemaName, cinemaName)
         assertEquals(cinema.cityName, cityName)
     }
 
-    @When("^administrator creates the movie <movieName>$")
+    @When("administrator creates the movie {string}")
     fun administratorCreateTheMovie(movieName: String) {
         val createMovieCMD = CreateMovieCMD(movieName, cinemaId.value)
         val domainObjectID = commandHandler.execute(createMovieCMD)
         movieId = domainObjectID as MovieId
     }
 
-    @Then("^movie <movieName> is created$")
+    @Then("movie {string} is created")
     fun movieIsCreated(movieName: String) {
         movieRepository.findById(movieId)
     }
 
-    @Given("^cinema <cinemaName> in the city <cityName> is defined$")
+    @Given("cinema {string} in the city {string} is defined")
     fun cinemaIsDefined(cinemaName: String, cityName: String) {
         val cinema = cinemaRepository.findByNameAndCityName(cinemaName, cityName)!!
 
@@ -78,41 +85,41 @@ class Administration(private val commandHandler: CommandHandler,
         assertEquals(cinema.cityName, cityName)
     }
 
-    @And("^movie <movieName> is defined$")
+    @And("movie with {string} is defined")
     fun movieIsDefined(movieName: String) {
         val movie = movieRepository.findById(movieId)
         assertEquals(movie.name, movieName)
     }
 
-    @When("^administrator create show <showName> with given movie, one ticket to which costs <ticketPrice> PLN in given cinema at <givenTime>$")
+    @When("administrator create show {string} with given movie, one ticket to which costs {int} PLN in given cinema at {string}")
     fun administratorCreateShowWithGivenMovieOneTicketToWhichCostsPLNInGivenCinema(showName: String, ticketCost: Int, givenTime: LocalTime) {
         val createShowCMD = CreateShowCMD(showName, movieId.value, cinemaId.value, BigDecimal(ticketCost), LocalDateTime.of(today, givenTime))
         val domainObjectID = commandHandler.execute(createShowCMD)
         showId = domainObjectID as ShowId
     }
 
-    @Then("^one ticket to this show in given cinema costs <ticketPrice> PLN$")
+    @Then("one ticket to this show in given cinema costs {int} PLN")
     fun oneTicketToThisShowInGivenCinemaCostsPLN(expectedCost: TicketPrice) {
         givenShow = showRepository.findById(showId)!!
 
         assertEquals(givenShow.cost.value, expectedCost)
     }
 
-    @Given("^show <showName> is defined in cinema and normally costs <ticketPrice> PLN$")
-    fun showIsDefinedInCinemaAndNormallyCostsPLN(expectedShowName: String, expectedTicketPrice: TicketPrice) {
+    @Given("show {string} is defined in cinema and normally costs {int} PLN")
+    fun showIsDefinedInCinemaAndNormallyCostsPLN(expectedShowName: String, expectedTicketPrice: Int) {
         assertEquals(givenShow.name, expectedShowName)
-        assertEquals(givenShow.cost, expectedTicketPrice)
+        assertEquals(givenShow.cost.value, BigDecimal(expectedTicketPrice))
     }
 
 
-    @When("^administrator add <ticketDiscount> which costs <percentFromNormalCost> % to show$")
+    @When("administrator add {string} which costs {int} % to show")
     fun administratorAddWhichCostsPLNToShow(ticketDiscount: String, ticketPrice: TicketPrice, percentFromNormalCost: Int) {
         val createShowTicketDiscountCMD = CreateShowTicketDiscountCMD(showId.value, "STUDENT_TICKET", percentFromNormalCost)
         val domainObjectID = commandHandler.execute(createShowTicketDiscountCMD)
         showTicketDiscountId = domainObjectID as ShowTicketDiscountId
     }
 
-    @Then("^show's <ticketDiscount> costs <ticketPrice> PLN$")
+    @Then("show's {string} costs {int} PLN")
     fun showSCostsPLN(ticketDiscount: String, ticketPrice: TicketPrice) {
         val ticketDiscountPriceQuery = TicketDiscountPriceQuery(ticketDiscount, showId.value)
         val discountsDTO = showTicketDiscountQueryRepo.getResultFor(ticketDiscountPriceQuery)
@@ -121,7 +128,7 @@ class Administration(private val commandHandler: CommandHandler,
         assertEquals(discountInfoDTO.ticketPrice, ticketPrice)
     }
 
-    @Then("^show's <studentTicketDiscount> costs <studentTicketPrice> PLN$")
+    @Then("show's {string} costs {string} PLN")
     fun showSStudentCostsPLN(studentTicketDiscount: String, ticketPrice: TicketPrice) {
         val ticketDiscountPriceQuery = TicketDiscountPriceQuery(studentTicketDiscount, showId.value)
         val discountsDTO = showTicketDiscountQueryRepo.getResultFor(ticketDiscountPriceQuery)

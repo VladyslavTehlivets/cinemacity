@@ -7,7 +7,7 @@ import umcs.testcraftmanshipt.cinemacity.domain.DomainObject
 import umcs.testcraftmanshipt.cinemacity.domain.show.ShowId
 import java.util.*
 
-class TicketBoard(showId: ShowId, private val ticketPlaces: List<TicketPlace>, id: TicketBoardId) : DomainObject(id) {
+class TicketBoard(val showId: ShowId, val ticketPlaces: List<TicketPlace>, id: TicketBoardId) : DomainObject(id) {
     constructor(id: TicketBoardId, showId: ShowId, ticketPlaces: List<TicketPlace>) : this(showId, ticketPlaces, id)
     constructor(showId: ShowId, ticketPlaces: List<TicketPlace>) : this(showId, ticketPlaces, TicketBoardId())
 

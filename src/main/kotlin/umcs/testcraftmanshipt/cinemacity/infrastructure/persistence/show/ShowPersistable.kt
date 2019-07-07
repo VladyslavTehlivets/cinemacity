@@ -1,5 +1,6 @@
 package umcs.testcraftmanshipt.cinemacity.infrastructure.persistence.show
 
+import org.springframework.data.mongodb.core.mapping.Document
 import umcs.testcraftmanshipt.cinemacity.domain.cinema.CinemaId
 import umcs.testcraftmanshipt.cinemacity.domain.movie.MovieId
 import umcs.testcraftmanshipt.cinemacity.domain.show.Show
@@ -7,9 +8,8 @@ import umcs.testcraftmanshipt.cinemacity.domain.show.ShowCost
 import umcs.testcraftmanshipt.cinemacity.domain.show.ShowId
 import java.math.BigDecimal
 import java.time.LocalDateTime
-import javax.persistence.Entity
 
-@Entity
+@Document("show")
 data class ShowPersistable(
         var id: String,
         var name: String,
