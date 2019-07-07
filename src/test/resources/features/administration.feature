@@ -27,9 +27,9 @@ Feature: Cinema administration
 
   Scenario Outline: The one where the administrator can add different ticket types to show
     Given show <showName> is defined in cinema and normally costs <ticketPrice> PLN
-    When administrator add <ticketPolicy> which costs <percentFromNormalCost> % to show
-    Then show's <ticketPolicy> costs <ticketPrice> PLN
-    And show's <studentTicketPolicy> costs <studentTicketPrice> PLN
+    When administrator add <ticketDiscount> which costs <percentFromNormalCost> % to show
+    Then show's <ticketDiscount> costs <ticketPrice> PLN
+    And show's <studentTicketDiscount> costs <studentTicketPrice> PLN
     Examples:
-      | showName              | ticketPolicy    | studentTicketPolicy | ticketPrice | percentFromNormalCost | studentTicketPrice
-      | "Lublin history show" | "NORMAL_TICKET" | "STUDENT_TICKET"    | 25          | 80                    | 20
+      | showName              | ticketDiscount  | studentTicketDiscount | ticketPrice | percentFromNormalCost | studentTicketPrice
+      | "Lublin history show" | "NORMAL_TICKET" | "STUDENT_TICKET"      | 25          | 80                    | 20

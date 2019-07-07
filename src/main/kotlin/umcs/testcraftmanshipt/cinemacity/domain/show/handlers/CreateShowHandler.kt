@@ -10,9 +10,14 @@ import umcs.testcraftmanshipt.cinemacity.domain.show.ShowRepository
 import umcs.testcraftmanshipt.cinemacity.domain.show.commands.CreateShowCMD
 import umcs.testcraftmanshipt.cinemacity.domain.show.ticket.TicketBoardFactory.Companion.createTicketBoard
 import umcs.testcraftmanshipt.cinemacity.domain.show.ticket.TicketBoardRepository
+import umcs.testcraftmanshipt.cinemacity.domain.show.ticket.TicketDiscount
+import umcs.testcraftmanshipt.cinemacity.domain.show.ticketDiscount.ShowTicketDiscountRepository
+import java.math.BigDecimal
 
 @Service
-class CreateShowHandler(private val showRepository: ShowRepository, val ticketBoardRepository: TicketBoardRepository) : Handler<CreateShowCMD> {
+class CreateShowHandler(private val showRepository: ShowRepository,
+                        private val ticketBoardRepository: TicketBoardRepository,
+                        private val showDiscountRepository: ShowTicketDiscountRepository) : Handler<CreateShowCMD> {
 
     override fun isHandlerForCommand(command: Command): Boolean {
         return command::class == CreateShowCMD::class
@@ -22,8 +27,12 @@ class CreateShowHandler(private val showRepository: ShowRepository, val ticketBo
         val show = createShow(command)
         showRepository.save(show)
 
-        val ticketBoard = createTicketBoard(ShowId(show.id.value))
+        val showId = ShowId(show.id.value)
+        val ticketBoard = createTicketBoard(showId)
         ticketBoardRepository.save(ticketBoard)
+
+        val showDefaultDiscount = TicketDiscount(showId, "NORMALLY_TICKET", BigDecimal(100))
+        showDiscountRepository.save(showDefaultDiscount)
 
         return show.id
     }

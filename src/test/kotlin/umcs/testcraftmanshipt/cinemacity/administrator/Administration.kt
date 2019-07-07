@@ -1,4 +1,4 @@
-package umcs.testcraftmanshipt.cinemacity
+package umcs.testcraftmanshipt.cinemacity.administrator
 
 import cucumber.api.java.en.And
 import cucumber.api.java.en.Given
@@ -19,11 +19,11 @@ import umcs.testcraftmanshipt.cinemacity.domain.show.ShowRepository
 import umcs.testcraftmanshipt.cinemacity.domain.show.commands.CreateShowCMD
 import umcs.testcraftmanshipt.cinemacity.domain.show.ticket.ShowTicketsRepository
 import umcs.testcraftmanshipt.cinemacity.domain.show.ticket.TicketPrice
-import umcs.testcraftmanshipt.cinemacity.domain.show.ticketPolicy.CreateShowTicketPolicyCMD
-import umcs.testcraftmanshipt.cinemacity.domain.show.ticketPolicy.ShowTicketPolicyId
+import umcs.testcraftmanshipt.cinemacity.domain.show.ticketDiscount.CreateShowTicketDiscountCMD
+import umcs.testcraftmanshipt.cinemacity.domain.show.ticketDiscount.ShowTicketDiscountId
 import umcs.testcraftmanshipt.cinemacity.infrastructure.CommandHandler
-import umcs.testcraftmanshipt.cinemacity.infrastructure.query.show.ticketPolicy.ShowTicketPolicyQueryRepo
-import umcs.testcraftmanshipt.cinemacity.infrastructure.query.show.ticketPolicy.TicketPolicyPriceQuery
+import umcs.testcraftmanshipt.cinemacity.infrastructure.query.show.ticketDiscount.ShowTicketDiscountQueryRepo
+import umcs.testcraftmanshipt.cinemacity.infrastructure.query.show.ticketDiscount.TicketDiscountPriceQuery
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -35,13 +35,13 @@ class Administration(private val commandHandler: CommandHandler,
                      private val movieRepository: MovieRepository,
                      private val showTicketsRepository: ShowTicketsRepository,
                      private val showRepository: ShowRepository,
-                     private val showTicketPolicyQueryRepo: ShowTicketPolicyQueryRepo) : En {
+                     private val showTicketDiscountQueryRepo: ShowTicketDiscountQueryRepo) : En {
 
     private lateinit var givenShow: Show
     private lateinit var showId: ShowId
     private lateinit var movieId: MovieId
     private lateinit var cinemaId: DomainObjectID
-    private lateinit var showTicketPolicyId: ShowTicketPolicyId
+    private lateinit var showTicketDiscountId: ShowTicketDiscountId
 
     private val today: LocalDate = LocalDate.now()
 
@@ -105,28 +105,28 @@ class Administration(private val commandHandler: CommandHandler,
     }
 
 
-    @When("^administrator add <ticketPolicy> which costs <percentFromNormalCost> % to show$")
-    fun administratorAddWhichCostsPLNToShow(ticketPolicy: String, ticketPrice: TicketPrice, percentFromNormalCost: Int) {
-        val createShowTicketPolicyCMD = CreateShowTicketPolicyCMD(showId.value, "STUDENT_TICKET", percentFromNormalCost)
-        val domainObjectID = commandHandler.execute(createShowTicketPolicyCMD)
-        showTicketPolicyId = domainObjectID as ShowTicketPolicyId
+    @When("^administrator add <ticketDiscount> which costs <percentFromNormalCost> % to show$")
+    fun administratorAddWhichCostsPLNToShow(ticketDiscount: String, ticketPrice: TicketPrice, percentFromNormalCost: Int) {
+        val createShowTicketDiscountCMD = CreateShowTicketDiscountCMD(showId.value, "STUDENT_TICKET", percentFromNormalCost)
+        val domainObjectID = commandHandler.execute(createShowTicketDiscountCMD)
+        showTicketDiscountId = domainObjectID as ShowTicketDiscountId
     }
 
-    @Then("^show's <ticketPolicy> costs <ticketPrice> PLN$")
-    fun showSCostsPLN(ticketPolicy: String, ticketPrice: TicketPrice) {
-        val ticketPolicyPriceQuery = TicketPolicyPriceQuery(ticketPolicy, showId.value)
-        val policiesDTO = showTicketPolicyQueryRepo.getResultFor(ticketPolicyPriceQuery)
-        val policyInfoDTO = policiesDTO.policiesList.first { it.ticketPolicy == ticketPolicy }
+    @Then("^show's <ticketDiscount> costs <ticketPrice> PLN$")
+    fun showSCostsPLN(ticketDiscount: String, ticketPrice: TicketPrice) {
+        val ticketDiscountPriceQuery = TicketDiscountPriceQuery(ticketDiscount, showId.value)
+        val discountsDTO = showTicketDiscountQueryRepo.getResultFor(ticketDiscountPriceQuery)
+        val discountInfoDTO = discountsDTO.discountsList.first { it.ticketDiscount == ticketDiscount }
 
-        assertEquals(policyInfoDTO.ticketPrice, ticketPrice)
+        assertEquals(discountInfoDTO.ticketPrice, ticketPrice)
     }
 
-    @Then("^show's <studentTicketPolicy> costs <studentTicketPrice> PLN$")
-    fun showSStudentCostsPLN(studentTicketPolicy: String, ticketPrice: TicketPrice) {
-        val ticketPolicyPriceQuery = TicketPolicyPriceQuery(studentTicketPolicy, showId.value)
-        val policiesDTO = showTicketPolicyQueryRepo.getResultFor(ticketPolicyPriceQuery)
-        val policyInfoDTO = policiesDTO.policiesList.first { it.ticketPolicy == studentTicketPolicy }
+    @Then("^show's <studentTicketDiscount> costs <studentTicketPrice> PLN$")
+    fun showSStudentCostsPLN(studentTicketDiscount: String, ticketPrice: TicketPrice) {
+        val ticketDiscountPriceQuery = TicketDiscountPriceQuery(studentTicketDiscount, showId.value)
+        val discountsDTO = showTicketDiscountQueryRepo.getResultFor(ticketDiscountPriceQuery)
+        val discountInfoDTO = discountsDTO.discountsList.first { it.ticketDiscount == studentTicketDiscount }
 
-        assertEquals(policyInfoDTO.ticketPrice, ticketPrice)
+        assertEquals(discountInfoDTO.ticketPrice, ticketPrice)
     }
 }

@@ -1,8 +1,8 @@
 package umcs.testcraftmanshipt.cinemacity.domain.show.ticket
 
-import umcs.testcraftmanshipt.cinemacity.domain.DomainObjectID
+import umcs.testcraftmanshipt.cinemacity.domain.show.ShowId
 
 interface TicketBoardRepository {
-    fun findByShowId(domainObjectID: DomainObjectID): TicketBoard
+    fun findByShowId(showId: ShowId): TicketBoard?
     fun save(ticketBoard: TicketBoard)
 }

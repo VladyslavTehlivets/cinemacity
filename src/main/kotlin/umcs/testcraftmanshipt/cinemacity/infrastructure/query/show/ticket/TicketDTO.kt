@@ -1,3 +1,3 @@
 package umcs.testcraftmanshipt.cinemacity.infrastructure.query.show.ticket
 
-class TicketsCostQuery(val ticketsPricePolices: MutableList<String>)
+class TicketDTO(val seatRow: Int, val seatColumn: Int)

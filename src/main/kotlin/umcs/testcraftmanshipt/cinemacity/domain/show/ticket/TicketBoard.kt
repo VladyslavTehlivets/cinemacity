@@ -1,19 +1,49 @@
 package umcs.testcraftmanshipt.cinemacity.domain.show.ticket
 
+import umcs.testcraftmanshipt.cinemacity.application.commands.AcceptReservationCMD
+import umcs.testcraftmanshipt.cinemacity.application.commands.ReserveTicketsCMD
+import umcs.testcraftmanshipt.cinemacity.domain.DomainException
 import umcs.testcraftmanshipt.cinemacity.domain.DomainObject
-import umcs.testcraftmanshipt.cinemacity.domain.DomainObjectID
-import umcs.testcraftmanshipt.cinemacity.domain.show.ticket.ReservationStatus.NOT_RESERVATED
+import umcs.testcraftmanshipt.cinemacity.domain.show.ShowId
+import java.util.*
 
-//todo unsigned int add validation
-class TicketBoard(showId: DomainObjectID, private val ticketPlaces: List<TicketPlace>, id: TicketBoardId) : DomainObject(id) {
-    fun get(rowId: Int, columnId: Int): TicketPlace {
-        return ticketPlaces.first { it.rowIndex == rowId && it.colIndex == columnId }
+class TicketBoard(showId: ShowId, private val ticketPlaces: List<TicketPlace>, id: TicketBoardId) : DomainObject(id) {
+    constructor(id: TicketBoardId, showId: ShowId, ticketPlaces: List<TicketPlace>) : this(showId, ticketPlaces, id)
+    constructor(showId: ShowId, ticketPlaces: List<TicketPlace>) : this(showId, ticketPlaces, TicketBoardId())
+
+    private fun getPlace(rowId: Int, columnId: Int): TicketPlace {
+        return ticketPlaces.firstOrNull { it.rowIndex == rowId && it.colIndex == columnId }
+                ?: throw DomainException("ticketBoard.noSuchPlace")
     }
 
     fun isAvailableToReservePlaces(ticketCount: Int): Boolean {
-        return ticketPlaces.count { it.ticketStatus == NOT_RESERVATED } >= ticketCount
+        return ticketPlaces.count { it.isNotReserved() } >= ticketCount
     }
 
-    constructor(id: TicketBoardId, showId: DomainObjectID, ticketPlaces: List<TicketPlace>) : this(showId, ticketPlaces, id)
-    constructor(showId: DomainObjectID, ticketPlaces: List<TicketPlace>) : this(showId, ticketPlaces, TicketBoardId())
+    fun acceptReservation(command: AcceptReservationCMD) {
+        val acceptedCount = ticketPlaces
+                .filter { it.hasNumber(command.reservationNumber) }
+                .onEach { it.acceptReservation() }
+                .count()
+
+        if ((acceptedCount < 1)) {
+            throw DomainException("ticketBoard.thereIsNoReservationForClient")
+        }
+    }
+
+    fun rejectNotPayedReservations() {
+        ticketPlaces
+                .filter { it.isReserved() }
+                .forEach { it.cancelReservation() }
+    }
+
+    fun reserveTickets(command: ReserveTicketsCMD): String {
+        val reservationNumber = UUID.randomUUID().toString()
+
+        command.selectedPlaces
+                .map { getPlace(it.rowSeatPlace, it.columnSeatPlace) }
+                .forEach { it.reserve(command, reservationNumber) }
+
+        return reservationNumber
+    }
 }
