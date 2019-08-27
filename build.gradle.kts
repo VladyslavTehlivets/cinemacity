@@ -31,7 +31,6 @@ dependencies {
     testImplementation("org.springframework.security:spring-security-test")
     testCompile("io.cucumber:cucumber-junit:4.3.1")
     testCompile("io.cucumber:cucumber-java:4.3.1")
-    compile("info.cukes:cucumber-jvm:1.2.5:pom")
     testImplementation("io.cucumber:cucumber-java:4.3.1")
     testImplementation("io.cucumber:cucumber-junit:4.3.1")
     compile("org.springframework.boot:spring-boot-starter-data-mongodb:2.1.4.RELEASE")
