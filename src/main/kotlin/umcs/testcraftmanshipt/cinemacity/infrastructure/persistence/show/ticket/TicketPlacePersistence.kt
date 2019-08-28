@@ -1,8 +1,10 @@
 package umcs.testcraftmanshipt.cinemacity.infrastructure.persistence.show.ticket
 
+import org.springframework.data.mongodb.core.mapping.Document
 import umcs.testcraftmanshipt.cinemacity.domain.show.ticket.TicketPlace
 import umcs.testcraftmanshipt.cinemacity.domain.show.ticket.TicketPlaceState
 
+@Document("ticket_place")
 class TicketPlacePersistence(
         var reservationStatus: String,
         var reservedForPerson: String?,

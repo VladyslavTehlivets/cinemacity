@@ -38,8 +38,6 @@ class Administration : CucumberStepDefinitions() {
     @Autowired
     private lateinit var movieRepository: MovieRepository
     @Autowired
-    private lateinit var showTicketsRepository: ShowTicketsRepository
-    @Autowired
     private lateinit var showRepository: ShowRepository
     @Autowired
     private lateinit var showTicketDiscountQueryRepo: ShowTicketDiscountQueryRepo
