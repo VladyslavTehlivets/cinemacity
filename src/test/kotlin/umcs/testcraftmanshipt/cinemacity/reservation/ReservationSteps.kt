@@ -1,14 +1,17 @@
 package umcs.testcraftmanshipt.cinemacity.reservation
 
-import cucumber.api.java.en.And
-import cucumber.api.java.en.Given
-import cucumber.api.java.en.Then
-import cucumber.api.java.en.When
+import io.cucumber.java.en.And
+import io.cucumber.java.en.Given
+import io.cucumber.java.en.Then
+import io.cucumber.java.en.When
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
+import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.security.test.context.support.WithMockUser
-import umcs.testcraftmanshipt.cinemacity.CucumberStepDefinitions
+import org.springframework.test.context.junit4.SpringRunner
 import umcs.testcraftmanshipt.cinemacity.application.commands.ReserveTicketsCMD
 import umcs.testcraftmanshipt.cinemacity.domain.cinema.Cinema
 import umcs.testcraftmanshipt.cinemacity.domain.cinema.CinemaRepository
@@ -27,7 +30,8 @@ import java.lang.Integer.parseInt
 import java.math.BigDecimal
 import java.time.LocalDateTime
 
-class ReservationSteps @Autowired constructor() : CucumberStepDefinitions() {
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+class ReservationSteps {
 
     @Autowired
     private lateinit var cinemaRepository: CinemaRepository

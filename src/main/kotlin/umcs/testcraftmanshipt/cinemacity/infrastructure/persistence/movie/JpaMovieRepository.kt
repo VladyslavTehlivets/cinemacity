@@ -8,11 +8,11 @@ import umcs.testcraftmanshipt.cinemacity.domain.movie.MovieRepository
 @Repository
 class JpaMovieRepository(private val movieRepository: SpringDataMovieRepository) : MovieRepository {
     override fun findById(movieId: MovieId): Movie {
-        return movieRepository.findById(movieId.value)
+        return movieRepository.findById(movieId.value).toDomainObject()
     }
 
     override fun findByName(movieName: String): Movie {
-        return movieRepository.findByName(movieName)
+        return movieRepository.findByName(movieName).toDomainObject()
     }
 
     override fun save(movie: Movie) {

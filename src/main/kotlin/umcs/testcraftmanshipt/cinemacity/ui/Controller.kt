@@ -1,4 +1,4 @@
-package umcs.testcraftmanshipt.cinemacity
+package umcs.testcraftmanshipt.cinemacity.ui
 
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping

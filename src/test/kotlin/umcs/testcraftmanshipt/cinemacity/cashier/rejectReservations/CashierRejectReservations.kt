@@ -1,13 +1,14 @@
-package umcs.testcraftmanshipt.cinemacity.cashier
+package umcs.testcraftmanshipt.cinemacity.cashier.rejectReservations
 
-import cucumber.api.java.en.And
-import cucumber.api.java.en.Given
-import cucumber.api.java.en.Then
-import cucumber.api.java.en.When
+import io.cucumber.java.en.And
+import io.cucumber.java.en.Given
+import io.cucumber.java.en.Then
+import io.cucumber.java.en.When
 import org.junit.Assert.assertTrue
 import org.junit.BeforeClass
 import org.springframework.beans.factory.annotation.Autowired
-import umcs.testcraftmanshipt.cinemacity.CucumberStepDefinitions
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest
+import org.springframework.boot.test.context.SpringBootTest
 import umcs.testcraftmanshipt.cinemacity.application.commands.RejectNotPayedReservationsCMD
 import umcs.testcraftmanshipt.cinemacity.application.commands.ReserveTicketsCMD
 import umcs.testcraftmanshipt.cinemacity.domain.cinema.Cinema
@@ -28,7 +29,8 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-class CashierRejectReservations : CucumberStepDefinitions() {
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+class CashierRejectReservations {
 
     @Autowired
     private lateinit var commandHandler: CommandHandler
@@ -74,7 +76,7 @@ class CashierRejectReservations : CucumberStepDefinitions() {
     }
 
     @And("{int}-th seat at {int}-th row on show {string} is reserved by a {string}")
-    fun thSeatAtThRowOnShowIsReservedByPersonWithFirstNameAndSecondName(seatColumn: Int, seatRow: Int, showName: String, userName: String) {
+    fun thSeatAtThRowOnShowIsReservedByPerson(seatColumn: Int, seatRow: Int, showName: String, userName: String) {
         val reserveTicketsCMD = ReserveTicketsCMD(givenShow.id.value, userName, mutableListOf(Reservation(seatColumn, seatRow)))
         commandHandler.execute(reserveTicketsCMD)
     }

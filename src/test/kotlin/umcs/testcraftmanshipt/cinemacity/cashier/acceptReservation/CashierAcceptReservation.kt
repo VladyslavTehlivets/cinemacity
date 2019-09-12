@@ -1,13 +1,13 @@
-package umcs.testcraftmanshipt.cinemacity.cashier
+package umcs.testcraftmanshipt.cinemacity.cashier.acceptReservation
 
-import cucumber.api.java.en.And
-import cucumber.api.java.en.Given
-import cucumber.api.java.en.Then
-import cucumber.api.java.en.When
-import junit.framework.Assert.assertNotNull
-import junit.framework.Assert.assertTrue
+import io.cucumber.java.en.And
+import io.cucumber.java.en.Given
+import io.cucumber.java.en.Then
+import io.cucumber.java.en.When
+import org.junit.Assert.assertTrue
+import org.junit.BeforeClass
 import org.springframework.beans.factory.annotation.Autowired
-import umcs.testcraftmanshipt.cinemacity.CucumberStepDefinitions
+import org.springframework.boot.test.context.SpringBootTest
 import umcs.testcraftmanshipt.cinemacity.application.commands.AcceptReservationCMD
 import umcs.testcraftmanshipt.cinemacity.application.commands.ReserveTicketsCMD
 import umcs.testcraftmanshipt.cinemacity.domain.cinema.Cinema
@@ -24,16 +24,15 @@ import umcs.testcraftmanshipt.cinemacity.domain.show.commands.CreateShowCMD
 import umcs.testcraftmanshipt.cinemacity.domain.show.ticket.Reservation
 import umcs.testcraftmanshipt.cinemacity.domain.show.ticket.ReservationStatus
 import umcs.testcraftmanshipt.cinemacity.infrastructure.CommandHandler
-import umcs.testcraftmanshipt.cinemacity.infrastructure.query.show.ticket.AvailableTicketsQuery
 import umcs.testcraftmanshipt.cinemacity.infrastructure.query.show.ticket.TicketBoardQueryRepo
 import umcs.testcraftmanshipt.cinemacity.infrastructure.query.show.ticket.TicketsStatusQuery
 import java.math.BigDecimal
 import java.time.LocalDate
-import java.time.LocalDate.now
-import java.time.LocalDateTime
-import java.time.LocalTime
+import java.time.LocalDateTime.of
+import java.time.LocalTime.of
 
-class CashierCreateAcceptedReservation : CucumberStepDefinitions() {
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+class CashierAcceptReservation {
 
     @Autowired
     private lateinit var commandHandler: CommandHandler
@@ -48,13 +47,19 @@ class CashierCreateAcceptedReservation : CucumberStepDefinitions() {
     @Autowired
     private lateinit var userShowReserveRepo: UserShowReservationRepo
 
+    private lateinit var reservationInfoId: ReservationInfoId
     private lateinit var givenMovie: Movie
     private lateinit var today: LocalDate
     private lateinit var givenShow: Show
     private lateinit var givenCinema: Cinema
 
-    @Given("show {string} is defined")
-    fun showIsDefined(showName: String) {
+    @BeforeClass
+    fun setUp() {
+        today = LocalDate.now()
+    }
+
+    @Given("show {string} defined to be at {string}")
+    fun showAtToday(showName: String, showTime: String) {
         val cityName = "Lublin"
         val cinemaName = "Plaza"
         val createCinemaCMD = CreateCinemaCMD(cinemaName, cityName)
@@ -69,36 +74,35 @@ class CashierCreateAcceptedReservation : CucumberStepDefinitions() {
         val expectedShowName = "Cool Movie Show"
         val givenCost = BigDecimal(15)
 
-        val createShowCMD = CreateShowCMD(expectedShowName, givenMovie.id.value, givenCinema.id.value, givenCost, LocalDateTime.of(now(), LocalTime.of(19, 30)))
+        val createShowCMD = CreateShowCMD(expectedShowName, givenMovie.id.value, givenCinema.id.value, givenCost, of(today, of(19, 30)))
         commandHandler.execute(createShowCMD)
         givenShow = showRepository.findByNameAndCinemaId(expectedShowName, givenCinema.id)!!
     }
 
-    @And("{int}-th seat at {int}-th row on show {string} is not reserved yet")
-    fun thSeatAtThRowOnShowIsNotReservedYet(seatColumn: Int, rowColumn: Int, showName: String) {
-        val availableTickets = ticketBoardQueryRepo.getResponseFor(AvailableTicketsQuery(givenShow.id.value))
-        assertNotNull(availableTickets.firstOrNull { it.seatRow == rowColumn && it.seatColumn == seatColumn })
-    }
-
-    @When("person pay for cashier and order this place")
-    fun personPayForCashierAndOrderThisPlace() {
-
-    }
-
-    @And("the cashier creates and accepts reservation of {int} in {int} for {string}")
-    fun theCashierCreatesAndAcceptsReservationOfSeatInRowFor(seatRow: Int, seatColumn: Int, userName: String) {
+    @And("{int}-th seat at {int}-th row on show {string} is reserved by a person with username {string}")
+    fun thSeatAtThRowOnShowIsReservedByPersonWithFirstNameAndSecondName(seatColumn: Int, seatRow: Int, showName: String, userName: String) {
         val reserveTicketsCMD = ReserveTicketsCMD(givenShow.id.value, userName, mutableListOf(Reservation(seatColumn, seatRow)))
         val domainObjectID = commandHandler.execute(reserveTicketsCMD)
-        val reservationInfoId = domainObjectID as ReservationInfoId
 
+        reservationInfoId = domainObjectID as ReservationInfoId
+    }
+
+    @When("this person pay to cashier")
+    fun thisPersonPayToCashier() {
+    }
+
+    @And("the cashier accepts reservation for {string}")
+    fun theCashierAcceptsReservationFor(userName: String) {
         val reservationInfo = userShowReserveRepo.findByReservationInfoId(reservationInfoId)!!
         val acceptReservationCMD = AcceptReservationCMD(givenShow.id.value, userName, reservationInfo.reservationNumber)
         commandHandler.execute(acceptReservationCMD)
     }
 
-    @Then("reservation created by cashier for user with {string} is accepted")
+    @Then("reservation for {string} is accepted")
     fun reservationForUserIsAccepted(userName: String) {
-        val userTicketsStatuses = ticketBoardQueryRepo.getResponseFor(TicketsStatusQuery(userName))
+        val reservationInfo = userShowReserveRepo.findByReservationInfoId(reservationInfoId)!!
+        val userTicketsStatuses = ticketBoardQueryRepo.getResponseFor(TicketsStatusQuery(reservationInfo.reservationNumber))
         assertTrue(userTicketsStatuses.all { it.reservationStatus == ReservationStatus.PAID.name })
+        assertTrue(userTicketsStatuses.all { it.reservedBy == userName })
     }
 }

@@ -7,6 +7,6 @@ import umcs.testcraftmanshipt.cinemacity.infrastructure.persistence.movie.MovieP
 @RepositoryDefinition(domainClass = MoviePersistable::class, idClass = String::class)
 interface SpringDataMovieRepository {
     fun save(cinemaPersistable: MoviePersistable)
-    fun findByName(movieName: String): Movie
-    fun findById(value: String): Movie
+    fun findByName(movieName: String): MoviePersistable
+    fun findById(value: String): MoviePersistable
 }

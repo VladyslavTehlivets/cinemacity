@@ -1,12 +1,12 @@
 package umcs.testcraftmanshipt.cinemacity.administrator
 
-import cucumber.api.java.en.And
-import cucumber.api.java.en.Given
-import cucumber.api.java.en.Then
-import cucumber.api.java.en.When
+import io.cucumber.java.en.And
+import io.cucumber.java.en.Given
+import io.cucumber.java.en.Then
+import io.cucumber.java.en.When
 import org.junit.Assert.assertEquals
 import org.springframework.beans.factory.annotation.Autowired
-import umcs.testcraftmanshipt.cinemacity.CucumberStepDefinitions
+import org.springframework.boot.test.context.SpringBootTest
 import umcs.testcraftmanshipt.cinemacity.domain.DomainObjectID
 import umcs.testcraftmanshipt.cinemacity.domain.cinema.CinemaRepository
 import umcs.testcraftmanshipt.cinemacity.domain.cinema.commands.CreateCinemaCMD
@@ -17,7 +17,6 @@ import umcs.testcraftmanshipt.cinemacity.domain.show.Show
 import umcs.testcraftmanshipt.cinemacity.domain.show.ShowId
 import umcs.testcraftmanshipt.cinemacity.domain.show.ShowRepository
 import umcs.testcraftmanshipt.cinemacity.domain.show.commands.CreateShowCMD
-import umcs.testcraftmanshipt.cinemacity.domain.show.ticket.ShowTicketsRepository
 import umcs.testcraftmanshipt.cinemacity.domain.show.ticket.TicketPrice
 import umcs.testcraftmanshipt.cinemacity.domain.show.ticketDiscount.CreateShowTicketDiscountCMD
 import umcs.testcraftmanshipt.cinemacity.domain.show.ticketDiscount.ShowTicketDiscountId
@@ -29,7 +28,8 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-class Administration : CucumberStepDefinitions() {
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+class Administration {
 
     @Autowired
     private lateinit var commandHandler: CommandHandler

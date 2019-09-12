@@ -29,14 +29,13 @@ dependencies {
     runtimeOnly("com.h2database:h2")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
-    testCompile("io.cucumber:cucumber-junit:4.3.1")
-    testCompile("io.cucumber:cucumber-java:4.3.1")
-    testImplementation("io.cucumber:cucumber-java:4.3.1")
-    testImplementation("io.cucumber:cucumber-junit:4.3.1")
+    testImplementation("io.cucumber:cucumber-java:4.7.1")
+    testImplementation("io.cucumber:cucumber-junit:4.7.1")
+    testImplementation("io.cucumber:cucumber-spring:4.7.2")
     compile("org.springframework.boot:spring-boot-starter-data-mongodb:2.1.4.RELEASE")
 }
 
-val cucumberRuntime by configurations.creating {
+val cucumberRuntime: Configuration by configurations.creating {
     extendsFrom(configurations.testImplementation.get())
 }
 
@@ -48,12 +47,12 @@ tasks.withType<KotlinCompile> {
 }
 
 tasks.register("cucumber") {
-    dependsOn("assemble")
+    dependsOn("assemble", "compileTestJava")
     doLast {
         javaexec {
-            main = "cucumber.api.cli.Main"
+            main = "io.cucumber.core.cli.Main"
             classpath = cucumberRuntime + sourceSets["main"].output + sourceSets["test"].output
-            args = listOf("--glue", "gradle.cucumber", "src/test/resources")
+            args = listOf("--plugin", "pretty","--glue", "gradle.cucumber", "src/test/resources")
         }
     }
 }
