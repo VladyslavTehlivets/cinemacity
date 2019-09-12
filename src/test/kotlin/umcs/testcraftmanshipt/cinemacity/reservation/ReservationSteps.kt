@@ -6,12 +6,9 @@ import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
-import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.security.test.context.support.WithMockUser
-import org.springframework.test.context.junit4.SpringRunner
 import umcs.testcraftmanshipt.cinemacity.application.commands.ReserveTicketsCMD
 import umcs.testcraftmanshipt.cinemacity.domain.cinema.Cinema
 import umcs.testcraftmanshipt.cinemacity.domain.cinema.CinemaRepository
@@ -24,6 +21,7 @@ import umcs.testcraftmanshipt.cinemacity.domain.show.ShowRepository
 import umcs.testcraftmanshipt.cinemacity.domain.show.commands.CreateShowCMD
 import umcs.testcraftmanshipt.cinemacity.domain.show.ticket.Reservation
 import umcs.testcraftmanshipt.cinemacity.domain.show.ticket.ReservationStatus.RESERVED
+import umcs.testcraftmanshipt.cinemacity.domain.show.ticketDiscount.TicketDiscount.Companion.BASE_NORMALLY_TICKET
 import umcs.testcraftmanshipt.cinemacity.infrastructure.CommandHandler
 import umcs.testcraftmanshipt.cinemacity.infrastructure.query.show.ticket.*
 import java.lang.Integer.parseInt
@@ -106,7 +104,7 @@ class ReservationSteps {
 
     @Then("the cost of reservation is {int} PLN")
     fun the_cost_of_reservation_is_PLN(amount: BigDecimal) {
-        val ticketCostDTO = ticketBoardRepo.getResponseFor(TicketsCostQuery(mutableListOf("NORMAL_TICKET", "STUDENT_TICKET")))
+        val ticketCostDTO = ticketBoardRepo.getResponseFor(TicketsCostQuery(mutableListOf(BASE_NORMALLY_TICKET, "STUDENT_TICKET")))
         assertEquals(ticketCostDTO.cost, amount)
     }
 
