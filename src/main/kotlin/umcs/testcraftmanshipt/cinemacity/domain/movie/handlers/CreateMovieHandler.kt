@@ -17,7 +17,7 @@ class CreateMovieHandler(private val movieRepository: MovieRepository) : Handler
     }
 
     override fun handle(command: CreateMovieCMD): DomainObjectID {
-        val movie = Movie(command.expectedMovieName, CinemaId(command.cinemaId))
+        val movie = Movie(command.movieName, CinemaId(command.cinemaId))
         movieRepository.save(movie)
         return movie.id
     }

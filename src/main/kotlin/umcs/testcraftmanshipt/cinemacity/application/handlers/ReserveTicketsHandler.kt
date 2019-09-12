@@ -13,14 +13,14 @@ import umcs.testcraftmanshipt.cinemacity.domain.show.ShowId
 import umcs.testcraftmanshipt.cinemacity.domain.show.ShowRepository
 import umcs.testcraftmanshipt.cinemacity.domain.show.ticket.ReservationStatus.RESERVED
 import umcs.testcraftmanshipt.cinemacity.domain.show.ticket.TicketBoardRepository
-import umcs.testcraftmanshipt.cinemacity.domain.show.ticketDiscount.ShowTicketDiscountRepository
+import umcs.testcraftmanshipt.cinemacity.domain.show.ticketDiscount.TicketDiscountRepository
 import java.math.BigDecimal
 import java.math.RoundingMode
 
 @Service
 class ReserveTicketsHandler(private val ticketBoardRepository: TicketBoardRepository,
                             private val showRepository: ShowRepository,
-                            private val showTicketDiscountRepository: ShowTicketDiscountRepository,
+                            private val ticketDiscountRepository: TicketDiscountRepository,
                             private val userShowReservRepo: UserShowReservationRepo) : Handler<ReserveTicketsCMD> {
 
     override fun isHandlerForCommand(command: Command): Boolean {
@@ -45,15 +45,11 @@ class ReserveTicketsHandler(private val ticketBoardRepository: TicketBoardReposi
     }
 
     private fun calculateReservationCost(showId: ShowId, command: ReserveTicketsCMD, showCostValue: BigDecimal): BigDecimal {
-        val showTicketDiscounts = showTicketDiscountRepository.findByShowId(showId)
+        val showTicketDiscounts = ticketDiscountRepository.findByShowId(showId)
         val selectedPriceDiscounts = command.selectedPlaces.map { it.ticketDiscount }
 
-        return showTicketDiscounts.filter { selectedPriceDiscounts.contains(it.value) }
-                .map {
-                    showCostValue.divide(BigDecimal(100))
-                            .multiply(it.percentFromShowCost)
-                            .setScale(0, RoundingMode.HALF_EVEN)
-                }
+        return showTicketDiscounts.filter { selectedPriceDiscounts.contains(it.discountName) }
+                .map { showCostValue.setScale(0, RoundingMode.HALF_EVEN) }
                 .reduce { acc, value -> acc.plus(value) } ?: throw DomainException("reserveTicketsHandler.ticketDiscountsNotConfiguredException")
     }
 }

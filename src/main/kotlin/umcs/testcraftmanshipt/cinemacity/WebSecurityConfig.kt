@@ -2,16 +2,17 @@ package umcs.testcraftmanshipt.cinemacity
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.provisioning.InMemoryUserDetailsManager
-import org.springframework.util.DigestUtils
 
 @EnableWebSecurity
 @Configuration
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 class WebSecurityConfig : WebSecurityConfigurerAdapter() {
     override fun configure(http: HttpSecurity) {
 
@@ -20,29 +21,31 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
-                .loginPage("/login")
                 .permitAll()
                 .and()
                 .logout()
                 .permitAll()
+                .and()
+                .cors().disable()
+                .csrf().disable()
+                .httpBasic()
     }
 
     @Bean
     override fun userDetailsService(): UserDetailsService {
         val admin = User
-                .withUsername("vladyslav")
+                .withDefaultPasswordEncoder()
+                .username("vladyslav")
                 .roles("ADMIN")
                 .password("admin")
-                .passwordEncoder { password -> DigestUtils.md5DigestAsHex(password.toByteArray()) }
                 .build()
 
-        val cashier = User.withUsername("cashier")
+        val cashier = User.withDefaultPasswordEncoder()
+                .username("cashier")
                 .roles("CASHIER")
                 .password("cashier")
-                .passwordEncoder { password -> DigestUtils.md5DigestAsHex(password.toByteArray()) }
                 .build()
 
         return InMemoryUserDetailsManager(admin, cashier)
-
     }
 }

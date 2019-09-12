@@ -18,8 +18,8 @@ import umcs.testcraftmanshipt.cinemacity.domain.show.ShowId
 import umcs.testcraftmanshipt.cinemacity.domain.show.ShowRepository
 import umcs.testcraftmanshipt.cinemacity.domain.show.commands.CreateShowCMD
 import umcs.testcraftmanshipt.cinemacity.domain.show.ticket.TicketPrice
-import umcs.testcraftmanshipt.cinemacity.domain.show.ticketDiscount.CreateShowTicketDiscountCMD
-import umcs.testcraftmanshipt.cinemacity.domain.show.ticketDiscount.ShowTicketDiscountId
+import umcs.testcraftmanshipt.cinemacity.domain.show.ticketDiscount.commands.CreateShowTicketDiscountCMD
+import umcs.testcraftmanshipt.cinemacity.domain.show.ticketDiscount.TicketDiscountId
 import umcs.testcraftmanshipt.cinemacity.infrastructure.CommandHandler
 import umcs.testcraftmanshipt.cinemacity.infrastructure.query.show.ticketDiscount.ShowTicketDiscountQueryRepo
 import umcs.testcraftmanshipt.cinemacity.infrastructure.query.show.ticketDiscount.TicketDiscountPriceQuery
@@ -46,7 +46,7 @@ class Administration {
     private lateinit var showId: ShowId
     private lateinit var movieId: MovieId
     private lateinit var cinemaId: DomainObjectID
-    private lateinit var showTicketDiscountId: ShowTicketDiscountId
+    private lateinit var ticketDiscountId: TicketDiscountId
 
     private val today: LocalDate = LocalDate.now()
 
@@ -112,9 +112,9 @@ class Administration {
 
     @When("administrator add {string} which costs {int} % to show")
     fun administratorAddWhichCostsPLNToShow(ticketDiscount: String, ticketPrice: TicketPrice, percentFromNormalCost: Int) {
-        val createShowTicketDiscountCMD = CreateShowTicketDiscountCMD(showId.value, "STUDENT_TICKET", percentFromNormalCost)
+        val createShowTicketDiscountCMD = CreateShowTicketDiscountCMD(showId.value, "STUDENT_TICKET", percentFromNormalCost.toDouble())
         val domainObjectID = commandHandler.execute(createShowTicketDiscountCMD)
-        showTicketDiscountId = domainObjectID as ShowTicketDiscountId
+        ticketDiscountId = domainObjectID as TicketDiscountId
     }
 
     @Then("show's {string} costs {int} PLN")

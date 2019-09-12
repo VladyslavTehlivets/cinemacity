@@ -10,8 +10,7 @@ class ShowFactory {
         fun createShow(createShowCMD: CreateShowCMD): Show {
             val movieId = MovieId(createShowCMD.movieId)
             val cinemaId = CinemaId(createShowCMD.cinemaId)
-            val show = Show(createShowCMD.showName, movieId, cinemaId, ShowCost(createShowCMD.cost), createShowCMD.dateTime)
-            return show
+            return Show(createShowCMD.showName, movieId, cinemaId, ShowCost(createShowCMD.cost), createShowCMD.dateTime)
         }
     }
 }
