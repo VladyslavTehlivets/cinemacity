@@ -1,4 +1,4 @@
-package umcs.testcraftmanshipt.cinemacity.ui
+package umcs.testcraftmanshipt.cinemacity.ui.admin
 
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize

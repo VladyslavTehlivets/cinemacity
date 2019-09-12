@@ -11,6 +11,7 @@ import umcs.testcraftmanshipt.cinemacity.domain.show.commands.CreateShowCMD
 import umcs.testcraftmanshipt.cinemacity.domain.show.ticket.TicketBoardFactory.Companion.createTicketBoard
 import umcs.testcraftmanshipt.cinemacity.domain.show.ticket.TicketBoardRepository
 import umcs.testcraftmanshipt.cinemacity.domain.show.ticketDiscount.TicketDiscount
+import umcs.testcraftmanshipt.cinemacity.domain.show.ticketDiscount.TicketDiscount.Companion.BASE_NORMALLY_TICKET
 import umcs.testcraftmanshipt.cinemacity.domain.show.ticketDiscount.TicketDiscountRepository
 
 @Service
@@ -30,7 +31,7 @@ class CreateShowHandler(private val showRepository: ShowRepository,
         val ticketBoard = createTicketBoard(showId)
         ticketBoardRepository.save(ticketBoard)
 
-        val showDefaultDiscount = TicketDiscount(showId, "NORMALLY_TICKET", command.cost)
+        val showDefaultDiscount = TicketDiscount(showId, BASE_NORMALLY_TICKET, command.cost)
         discountRepository.save(showDefaultDiscount)
 
         return show.id

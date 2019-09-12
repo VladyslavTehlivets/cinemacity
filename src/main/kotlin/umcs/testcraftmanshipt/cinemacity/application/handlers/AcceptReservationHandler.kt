@@ -12,7 +12,7 @@ import umcs.testcraftmanshipt.cinemacity.domain.show.ticket.TicketBoardRepositor
 
 @Service
 class AcceptReservationHandler(private val ticketBoardRepository: TicketBoardRepository,
-                               private val userShowReservRepo: UserShowReservationRepo) : Handler<AcceptReservationCMD> {
+                               private val userShowReservationRepo: UserShowReservationRepo) : Handler<AcceptReservationCMD> {
 
     override fun isHandlerForCommand(command: Command): Boolean {
         return command::class == AcceptReservationCMD::class
@@ -20,14 +20,14 @@ class AcceptReservationHandler(private val ticketBoardRepository: TicketBoardRep
 
     override fun handle(command: AcceptReservationCMD): DomainObjectID {
 
-        val reservationInfo = userShowReservRepo.findByReservationNumber(command.reservationNumber) ?: throw DomainEntityNotFoundException(command.reservationNumber)
+        val reservationInfo = userShowReservationRepo.findByReservationNumber(command.reservationNumber) ?: throw DomainEntityNotFoundException(command.reservationNumber)
         val ticketBoard = ticketBoardRepository.findByShowId(ShowId(command.showId)) ?: throw DomainEntityNotFoundException(command.showId)
 
         ticketBoard.acceptReservation(command)
         ticketBoardRepository.save(ticketBoard)
 
         reservationInfo.acceptReservation()
-        userShowReservRepo.save(reservationInfo)
+        userShowReservationRepo.save(reservationInfo)
 
         return ticketBoard.id
     }
