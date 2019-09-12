@@ -1,5 +1,7 @@
 package umcs.testcraftmanshipt.cinemacity.infrastructure.persistence.show
 
+import org.springframework.data.annotation.Id
+import org.springframework.data.mongodb.core.index.Indexed
 import org.springframework.data.mongodb.core.mapping.Document
 import umcs.testcraftmanshipt.cinemacity.domain.cinema.CinemaId
 import umcs.testcraftmanshipt.cinemacity.domain.movie.MovieId
@@ -11,8 +13,8 @@ import java.time.LocalDateTime
 
 @Document("show")
 data class ShowPersistable(
-        var id: String,
-        var name: String,
+        @Id var id: String,
+        @Indexed(unique = true) var name: String,
         var movieId: String,
         var cinemaId: String,
         var cost: BigDecimal,
