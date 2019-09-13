@@ -18,8 +18,8 @@ import umcs.testcraftmanshipt.cinemacity.domain.show.ShowId
 import umcs.testcraftmanshipt.cinemacity.domain.show.ShowRepository
 import umcs.testcraftmanshipt.cinemacity.domain.show.commands.CreateShowCMD
 import umcs.testcraftmanshipt.cinemacity.domain.show.ticket.TicketPrice
-import umcs.testcraftmanshipt.cinemacity.domain.show.ticketDiscount.commands.CreateShowTicketDiscountCMD
 import umcs.testcraftmanshipt.cinemacity.domain.show.ticketDiscount.TicketDiscountId
+import umcs.testcraftmanshipt.cinemacity.domain.show.ticketDiscount.commands.CreateShowTicketDiscountCMD
 import umcs.testcraftmanshipt.cinemacity.infrastructure.CommandHandler
 import umcs.testcraftmanshipt.cinemacity.infrastructure.query.show.ticketDiscount.ShowTicketDiscountQueryRepo
 import umcs.testcraftmanshipt.cinemacity.infrastructure.query.show.ticketDiscount.TicketDiscountPriceQuery

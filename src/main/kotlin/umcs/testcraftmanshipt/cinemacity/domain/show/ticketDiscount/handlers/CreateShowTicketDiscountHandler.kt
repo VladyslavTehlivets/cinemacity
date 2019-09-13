@@ -4,13 +4,9 @@ import org.springframework.stereotype.Service
 import umcs.testcraftmanshipt.cinemacity.domain.Command
 import umcs.testcraftmanshipt.cinemacity.domain.DomainObjectID
 import umcs.testcraftmanshipt.cinemacity.domain.Handler
-import umcs.testcraftmanshipt.cinemacity.domain.exception.DomainEntityNotFoundException
 import umcs.testcraftmanshipt.cinemacity.domain.show.Show
 import umcs.testcraftmanshipt.cinemacity.domain.show.ShowId
 import umcs.testcraftmanshipt.cinemacity.domain.show.ShowRepository
-import umcs.testcraftmanshipt.cinemacity.domain.show.ticket.TicketBoard
-import umcs.testcraftmanshipt.cinemacity.domain.show.ticket.TicketBoardRepository
-import umcs.testcraftmanshipt.cinemacity.domain.show.ticket.commands.CheckTicketAvailabilityCMD
 import umcs.testcraftmanshipt.cinemacity.domain.show.ticketDiscount.TicketDiscount
 import umcs.testcraftmanshipt.cinemacity.domain.show.ticketDiscount.TicketDiscountRepository
 import umcs.testcraftmanshipt.cinemacity.domain.show.ticketDiscount.commands.CreateShowTicketDiscountCMD

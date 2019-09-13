@@ -7,7 +7,6 @@ import io.cucumber.java.en.When
 import org.junit.Assert.assertTrue
 import org.junit.BeforeClass
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest
 import org.springframework.boot.test.context.SpringBootTest
 import umcs.testcraftmanshipt.cinemacity.application.commands.RejectNotPayedReservationsCMD
 import umcs.testcraftmanshipt.cinemacity.application.commands.ReserveTicketsCMD

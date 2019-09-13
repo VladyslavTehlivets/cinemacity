@@ -2,8 +2,10 @@ package umcs.testcraftmanshipt.cinemacity.ui.admin
 
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.web.bind.annotation.*
-import umcs.testcraftmanshipt.cinemacity.domain.DomainObjectID
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 import umcs.testcraftmanshipt.cinemacity.domain.cinema.commands.CreateCinemaCMD
 import umcs.testcraftmanshipt.cinemacity.domain.movie.commands.CreateMovieCMD
 import umcs.testcraftmanshipt.cinemacity.domain.show.commands.CreateShowCMD
