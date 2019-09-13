@@ -33,6 +33,8 @@ dependencies {
     testImplementation("io.cucumber:cucumber-junit:4.7.1")
     testImplementation("io.cucumber:cucumber-spring:4.7.2")
     compile("org.springframework.boot:spring-boot-starter-data-mongodb:2.1.4.RELEASE")
+    compile("io.springfox:springfox-swagger2:2.7.0")
+    compile("io.springfox:springfox-swagger-ui:2.7.0")
 }
 
 val cucumberRuntime: Configuration by configurations.creating {
